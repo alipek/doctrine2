@@ -1,7 +1,7 @@
 {
-    "name": "stas29a/doctine2",
+    "name": "doctrine/orm",
     "type": "library",
-    "description": "Doctrine 2 fork with performance improvements",
+    "description": "Doctrine 2 fork with improvements",
     "keywords": ["orm", "database"],
     "homepage": "http://www.doctrine-project.org",
     "license": "MIT",

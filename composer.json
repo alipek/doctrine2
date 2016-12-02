@@ -1,7 +1,7 @@
 {
-    "name": "doctrine/orm",
+    "name": "stas29a/doctine2",
     "type": "library",
-    "description": "Object-Relational-Mapper for PHP",
+    "description": "Doctrine 2 fork with performance improvements",
     "keywords": ["orm", "database"],
     "homepage": "http://www.doctrine-project.org",
     "license": "MIT",

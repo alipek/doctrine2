@@ -29,7 +29,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Proxy\ProxyFactory;
 use Doctrine\ORM\Query\FilterCollection;
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\Performance\Configuration;
+use Doctrine\ORM\Performance\Configuration as PerformanceConfiguration;
 
 /**
  * The EntityManager is the central access point to ORM functionality.
@@ -139,7 +139,9 @@ use Doctrine\ORM\Performance\Configuration;
      */
     private $cache;
 
-    /** @var   */
+    /**
+     * @var PerformanceConfiguration
+     */
     protected $performanceConfiguration;
 
     /**
@@ -149,16 +151,16 @@ use Doctrine\ORM\Performance\Configuration;
      * @param \Doctrine\DBAL\Connection     $conn
      * @param \Doctrine\ORM\Configuration   $config
      * @param \Doctrine\Common\EventManager $eventManager
-     * @param Configuration                 $performanceConfiguration
+     * @param PerformanceConfiguration      $performanceConfiguration
      */
-    protected function __construct(Connection $conn, Configuration $config, EventManager $eventManager, Configuration $performanceConfiguration = null)
+    protected function __construct(Connection $conn, Configuration $config, EventManager $eventManager, PerformanceConfiguration $performanceConfiguration = null)
     {
         $this->conn              = $conn;
         $this->config            = $config;
         $this->eventManager      = $eventManager;
 
         if(!$performanceConfiguration)
-            $performanceConfiguration = new Configuration($this);
+            $performanceConfiguration = new PerformanceConfiguration($this);
 
         $this->performanceConfiguration = $performanceConfiguration;
 

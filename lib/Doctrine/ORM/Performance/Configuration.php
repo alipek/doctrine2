@@ -85,12 +85,12 @@ class Configuration
      */
     public function newEntityPersister(ClassMetadata $metadata)
     {
-        $obj = new $this->entityPersisterClass($this->enityManager, $metadata);
+        $obj = new $this->entityPersisterClass($this->entityManager, $metadata);
 
         if($obj instanceof HasPerfomanceConfiguration)
             $obj->setPerformanceConfiguration($this);
 
-        return;
+        return $obj;
     }
 
     /**

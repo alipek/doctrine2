@@ -40,6 +40,7 @@ use Doctrine\ORM\Persisters\Collection\ManyToManyPersister;
 use Doctrine\ORM\Persisters\Collection\OneToManyPersister;
 use Doctrine\ORM\Persisters\Entity\BasicEntityPersister;
 use Doctrine\ORM\Persisters\Entity\JoinedSubclassPersister;
+use Doctrine\ORM\Persisters\Entity\MultiEntityPersister;
 use Doctrine\ORM\Persisters\Entity\SingleTablePersister;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\Utility\IdentifierFlattener;
@@ -282,6 +283,11 @@ class UnitOfWork implements PropertyChangedListener
     private $reflectionPropertiesGetter;
 
     /**
+     * @var \Doctrine\ORM\Performance\Configuration
+     */
+    protected $performanceConfiguration;
+
+    /**
      * Initializes a new UnitOfWork instance, bound to the given EntityManager.
      *
      * @param EntityManagerInterface $em
@@ -290,6 +296,7 @@ class UnitOfWork implements PropertyChangedListener
     {
         $this->em                         = $em;
         $this->evm                        = $em->getEventManager();
+        $this->performanceConfiguration   = $em->getPerformanceConfiguration();
         $this->listenersInvoker           = new ListenersInvoker($em);
         $this->hasCache                   = $em->getConfiguration()->isSecondLevelCacheEnabled();
         $this->identifierFlattener        = new IdentifierFlattener($this, $em->getMetadataFactory());
@@ -318,8 +325,10 @@ class UnitOfWork implements PropertyChangedListener
      */
     public function commit($entity = null)
     {
+        $isEventsEnabled = $this->performanceConfiguration->isIsEventsSystemEnabled();
+
         // Raise preFlush
-        if ($this->evm->hasListeners(Events::preFlush)) {
+        if ($this->evm->hasListeners(Events::preFlush) && $isEventsEnabled) {
             $this->evm->dispatchEvent(Events::preFlush, new PreFlushEventArgs($this->em));
         }
 
@@ -339,7 +348,7 @@ class UnitOfWork implements PropertyChangedListener
                 $this->entityUpdates ||
                 $this->collectionUpdates ||
                 $this->collectionDeletions ||
-                $this->orphanRemovals)) {
+                $this->orphanRemovals) && $isEventsEnabled) {
             $this->dispatchOnFlushEvent();
             $this->dispatchPostFlushEvent();
 
@@ -352,7 +361,8 @@ class UnitOfWork implements PropertyChangedListener
             }
         }
 
-        $this->dispatchOnFlushEvent();
+        if($isEventsEnabled)
+            $this->dispatchOnFlushEvent();
 
         // Now we need a commit order to maintain referential integrity
         $commitOrder = $this->getCommitOrder();
@@ -412,7 +422,8 @@ class UnitOfWork implements PropertyChangedListener
             $coll->takeSnapshot();
         }
 
-        $this->dispatchPostFlushEvent();
+        if($isEventsEnabled)
+            $this->dispatchPostFlushEvent();
 
         // Clear up
         $this->entityInsertions =
@@ -995,9 +1006,10 @@ class UnitOfWork implements PropertyChangedListener
 
             unset($this->entityInsertions[$oid]);
 
+            /**
             if ($invoke !== ListenersInvoker::INVOKE_NONE) {
                 $entities[] = $entity;
-            }
+            }*/
         }
 
         $postInsertIds = $persister->executeInserts();
@@ -1021,9 +1033,11 @@ class UnitOfWork implements PropertyChangedListener
             }
         }
 
+        /*
         foreach ($entities as $entity) {
             $this->listenersInvoker->invoke($class, Events::postPersist, $entity, new LifecycleEventArgs($entity, $this->em), $invoke);
         }
+        */
     }
 
     /**
@@ -2993,7 +3007,7 @@ class UnitOfWork implements PropertyChangedListener
 
         switch (true) {
             case ($class->isInheritanceTypeNone()):
-                $persister = new BasicEntityPersister($this->em, $class);
+                $persister = $this->em->getPerformanceConfiguration()->newEntityPersister($class);
                 break;
 
             case ($class->isInheritanceTypeSingleTable()):

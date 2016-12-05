@@ -30,6 +30,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Performance\Configuration;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\Persisters\SqlExpressionVisitor;
 use Doctrine\ORM\Persisters\SqlValueVisitor;
@@ -86,7 +87,7 @@ class BasicEntityPersister implements EntityPersister
     /**
      * @var array
      */
-    static private $comparisonMap = array(
+    static protected $comparisonMap = array(
         Comparison::EQ       => '= %s',
         Comparison::IS       => '= %s',
         Comparison::NEQ      => '!= %s',
@@ -161,7 +162,7 @@ class BasicEntityPersister implements EntityPersister
      *
      * @var string
      */
-    private $insertSql;
+    protected $insertSql;
 
     /**
      * The quote strategy.
@@ -190,7 +191,7 @@ class BasicEntityPersister implements EntityPersister
     /**
      * @var CachedPersisterContext
      */
-    private $noLimitsContext;
+    protected $noLimitsContext;
 
     /**
      * Initializes a new <tt>BasicEntityPersister</tt> that uses the given EntityManager
@@ -198,6 +199,7 @@ class BasicEntityPersister implements EntityPersister
      *
      * @param EntityManagerInterface $em
      * @param ClassMetadata          $class
+     * @param Configuration          $performanceConfiguration
      */
     public function __construct(EntityManagerInterface $em, ClassMetadata $class)
     {

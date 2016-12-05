@@ -293,4 +293,11 @@ interface EntityManagerInterface extends ObjectManager
      * @return boolean True, if the EM has a filter collection.
      */
     public function hasFilters();
+
+    /**
+     * Gets current performance configuration
+     *
+     * @return \Doctrine\ORM\Performance\Configuration
+     */
+    public function getPerformanceConfiguration();
 }

@@ -29,6 +29,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Proxy\ProxyFactory;
 use Doctrine\ORM\Query\FilterCollection;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\Performance\Configuration;
 
 /**
  * The EntityManager is the central access point to ORM functionality.
@@ -138,6 +139,9 @@ use Doctrine\Common\Util\ClassUtils;
      */
     private $cache;
 
+    /** @var   */
+    protected $performanceConfiguration;
+
     /**
      * Creates a new EntityManager that operates on the given database connection
      * and uses the given Configuration and EventManager implementations.
@@ -145,12 +149,18 @@ use Doctrine\Common\Util\ClassUtils;
      * @param \Doctrine\DBAL\Connection     $conn
      * @param \Doctrine\ORM\Configuration   $config
      * @param \Doctrine\Common\EventManager $eventManager
+     * @param Configuration                 $performanceConfiguration
      */
-    protected function __construct(Connection $conn, Configuration $config, EventManager $eventManager)
+    protected function __construct(Connection $conn, Configuration $config, EventManager $eventManager, Configuration $performanceConfiguration = null)
     {
         $this->conn              = $conn;
         $this->config            = $config;
         $this->eventManager      = $eventManager;
+
+        if(!$performanceConfiguration)
+            $performanceConfiguration = new Configuration($this);
+
+        $this->performanceConfiguration = $performanceConfiguration;
 
         $metadataFactoryClassName = $config->getClassMetadataFactoryName();
 
@@ -915,5 +925,13 @@ use Doctrine\Common\Util\ClassUtils;
     public function hasFilters()
     {
         return null !== $this->filterCollection;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPerformanceConfiguration()
+    {
+        return $this->performanceConfiguration;
     }
 }

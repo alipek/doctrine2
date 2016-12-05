@@ -6,13 +6,20 @@ Currently implements:
 - Disabling internal events when you need
 
 The main object you need is `PerformanceConfiguration`.
-Here is example for demonstration:
+Here is an example for demonstration:
 
 ```
-$performanceConfiguration = $em->getPerformanceConfiguration(); //Getting performance configuration
-$performanceConfiguration->setIsEventsSystemEnabled(false); //Disable internal events
-$performanceConfiguration->enableBatchInsert(); //Enable batch inserts
-$performanceConfiguration->setMaxPerInsert(500); //Set how many entities will be inserted per one insert
+//Getting performance configuration
+$performanceConfiguration = $em->getPerformanceConfiguration();
+
+//Disable internal events
+$performanceConfiguration->setIsEventsSystemEnabled(false);
+
+//Enable batch inserts
+$performanceConfiguration->enableBatchInsert();
+
+//Set how many entities will be inserted per one insert
+$performanceConfiguration->setMaxPerInsert(500);
 ```
 
 ## More resources:

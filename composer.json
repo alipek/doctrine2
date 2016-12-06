@@ -1,5 +1,5 @@
 {
-    "name": "stas29/orm",
+    "name": "stas29a/orm",
     "type": "library",
     "description": "Doctrine 2 fork with improvements",
     "keywords": ["orm", "database"],

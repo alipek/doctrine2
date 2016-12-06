@@ -1,5 +1,5 @@
 {
-    "name": "doctrine/orm",
+    "name": "stas29/orm",
     "type": "library",
     "description": "Doctrine 2 fork with improvements",
     "keywords": ["orm", "database"],
@@ -13,9 +13,6 @@
         {"name": "Marco Pivetta", "email": "ocramius@gmail.com"}
     ],
     "minimum-stability": "dev",
-    "replace": {
-        "doctrine/orm": "*"
-    },
     "require": {
         "php": "^5.6 || ^7.0",
         "ext-pdo": "*",
